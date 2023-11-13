@@ -13,7 +13,7 @@ class SimpleCNN(Module):
     def __init__(self):
         super(SimpleCNN, self).__init__()
 
-        hidden_channels = 4
+        hidden_channels = 16
 
         self.conv1 = Conv3d(in_channels=1, out_channels=hidden_channels, kernel_size=3, stride=1, padding=1)
         self.conv2 = Conv3d(in_channels=hidden_channels, out_channels=hidden_channels, kernel_size=3, stride=1, padding=1)
