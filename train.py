@@ -1,3 +1,4 @@
+import argparse
 import logging
 from typing import *
 
@@ -13,7 +14,6 @@ from model import SimpleCNN
 logging.basicConfig(level=logging.INFO)
 torch.manual_seed(55)
 
-DATASET_FOLDER = "./data/train/"
 
 def evaluate(model: Module, loader: DataLoader, loss_fn: Callable) -> Tuple[float, float]:
     model.eval()
@@ -32,15 +32,17 @@ def evaluate(model: Module, loader: DataLoader, loss_fn: Callable) -> Tuple[floa
     model.train()
     return accuracy, loss
 
-def main():
+def main(args: argparse.Namespace = None) -> None:
     # TODO: create config
     num_epochs = 10
     batch_size = 8
     learning_rate = 0.00005
     train_portion = 0.8
 
+    dataset_folder = args.data_folder
+
     logging.info("Loading data...")
-    raw_dataset = CustomDataset(data_folder=DATASET_FOLDER, max_datapoints=64)
+    raw_dataset = CustomDataset(data_folder=dataset_folder, max_datapoints=64)
 
     logging.info("Preprocessing data...")
     images = preprocess(images=raw_dataset.image_data)  # pad images to have depth 40 (found to be max depth)
@@ -89,4 +91,7 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-d', '--data-folder', type=str, required=True)
+    main(parser.parse_args())
+
