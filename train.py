@@ -10,7 +10,7 @@ from torch.utils.data import DataLoader
 
 from dataset import CustomDataset
 from data_utils import TorchDataset, preprocess
-from model import NaiveCNN
+from model import *
 
 logging.basicConfig(level=logging.INFO)
 torch.manual_seed(55)
@@ -72,7 +72,7 @@ def main(args: argparse.Namespace = None) -> None:
         shuffle=False)
 
     logging.info("Loading model...")
-    model = NaiveCNN()
+    model = AlexNet3D()
     loss_fn = CrossEntropyLoss()
     optimizer = AdamW(model.parameters(), lr=learning_rate)
     model.to(device)
