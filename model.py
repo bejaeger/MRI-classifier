@@ -55,7 +55,7 @@ class AlexNet3D(Module):
 
         self.layer1 = nn.Sequential(
             nn.Conv3d(1, hidden_channels * 2, kernel_size=11, stride=4, padding=0),
-            nn.BatchNorm3d(hidden_channels),
+            nn.BatchNorm3d(hidden_channels * 2),
             nn.ReLU(),
             nn.MaxPool3d(kernel_size=3, stride=2))
         self.layer2 = nn.Sequential(
