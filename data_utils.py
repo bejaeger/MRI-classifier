@@ -32,8 +32,13 @@ def pad_image(image: NDArray, target_depth: int) -> Tensor:
         image = pad(image, padding, "constant", 0)
     return image
 
+
 def pad_images(images: Sequence[NDArray], target_depth: int = 40) -> Sequence[Tensor]:
     padded_images = []
     for image in images:
         padded_images.append(pad_image(image=image, target_depth=target_depth))
     return padded_images
+
+
+def preprocess(images: Sequence[NDArray]) -> Sequence[Tensor]:
+    return pad_images(images=images, target_depth=40)

@@ -14,7 +14,7 @@ from dataclasses import dataclass
 class Metadata:
     patient_id: str
     age: int
-    psa: float  # prostate specific antigen level
+    prostate_specific_antigen_level: float
 
     @classmethod
     def from_json(cls, path: str) -> 'Metadata':
@@ -84,7 +84,7 @@ class CustomDataset:
         plt.show()
 
     def plot_psa_distribution(self) -> str:
-        psa = [m.psa for m in self.metadata]
+        psa = [m.prostate_specific_antigen_level for m in self.metadata]
         plt.hist(psa)
         plt.xlabel( "PSA")
         plt.show()
@@ -108,7 +108,7 @@ class CustomDataset:
 
     def plot_test_images(self) -> str:
         num_images = 15
-        num_patients = 4
+        num_patients = 5
         plt.figure(figsize=(15, 5))
         count = 0
         labels = dict()
@@ -123,6 +123,7 @@ class CustomDataset:
             count += 1
         plt.tight_layout()
         plt.show()
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -143,4 +144,6 @@ if __name__ == "__main__":
         dataset.plot_example_images()
     if args.plot_single_patient_images:
         dataset.plot_single_patient_images()
+
     dataset.plot_test_images()
+    
