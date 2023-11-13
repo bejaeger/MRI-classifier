@@ -9,9 +9,9 @@ from torch.nn import (
     ReLU)
 
 
-class SimpleCNN(Module):
+class NaiveCNN(Module):
     def __init__(self):
-        super(SimpleCNN, self).__init__()
+        super(NaiveCNN, self).__init__()
 
         hidden_channels = 16
 
@@ -23,7 +23,7 @@ class SimpleCNN(Module):
         self.relu = ReLU()
         self.pool = MaxPool3d(kernel_size=2, stride=2)
 
-        self.dropout = Dropout(0.5)
+        self.dropout = Dropout(0.3)
 
         self.fc1 = Linear(16 * 16 * 2 * hidden_channels, 128)
         self.fc2 = Linear(128, 2)
@@ -39,7 +39,6 @@ class SimpleCNN(Module):
         x = self.pool(self.relu(self.conv3(x)))
         x = self.dropout(x)
         x = self.pool(self.relu(self.conv4(x)))
-        x = self.dropout(x)
 
         x = flatten(x, 1)
         x = self.relu(self.fc1(x))

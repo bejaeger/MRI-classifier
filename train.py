@@ -10,7 +10,7 @@ from torch.utils.data import DataLoader
 
 from dataset import CustomDataset
 from data_utils import TorchDataset, preprocess
-from model import SimpleCNN
+from model import NaiveCNN
 
 logging.basicConfig(level=logging.INFO)
 torch.manual_seed(55)
@@ -37,7 +37,7 @@ def main(args: argparse.Namespace = None) -> None:
     # TODO: create config
     num_epochs = 10
     batch_size = 8
-    learning_rate = 0.00005
+    learning_rate = 3e-4
     train_portion = 0.8
 
     dataset_folder = args.data_folder
@@ -55,8 +55,8 @@ def main(args: argparse.Namespace = None) -> None:
     val_images = images[int(len(images) * train_portion):]
     val_labels = labels[int(len(labels) * train_portion):]
 
-    logging.info("[train set] num positive/negative labels:", sum(train_labels), "/", len(train_labels) - sum(train_labels))
-    logging.info("[val set] num positive/negative labels:", sum(val_labels), "/", len(val_labels) - sum(val_labels))
+    logging.info(f"[train set] num positive/negative labels: {sum(train_labels)} / {len(train_labels) - sum(train_labels)}")
+    logging.info(f"[val set] num positive/negative labels: {sum(val_labels)} / {len(val_labels) - sum(val_labels)}")
     
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
@@ -72,7 +72,7 @@ def main(args: argparse.Namespace = None) -> None:
         shuffle=False)
 
     logging.info("Loading model...")
-    model = SimpleCNN()
+    model = NaiveCNN()
     loss_fn = CrossEntropyLoss()
     optimizer = AdamW(model.parameters(), lr=learning_rate)
     model.to(device)
