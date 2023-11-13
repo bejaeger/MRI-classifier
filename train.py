@@ -54,15 +54,24 @@ def main(args: argparse.Namespace = None) -> None:
     val_images = images[int(len(images) * train_portion):]
     val_labels = labels[int(len(labels) * train_portion):]
     
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+
     train_dataset = TorchDataset(images=train_images, labels=train_labels)
     val_dataset = TorchDataset(images=val_images, labels=val_labels)
-    train_loader = DataLoader(dataset=train_dataset, batch_size=batch_size, shuffle=True)
-    val_loader = DataLoader(dataset=val_dataset, batch_size=batch_size, shuffle=False)
+    train_loader = DataLoader(
+        dataset=train_dataset,
+        batch_size=batch_size,
+        shuffle=True)
+    val_loader = DataLoader(
+        dataset=val_dataset,
+        batch_size=batch_size,
+        shuffle=False)
 
     logging.info("Loading model...")
     model = SimpleCNN()
     loss_fn = CrossEntropyLoss()
     optimizer = AdamW(model.parameters(), lr=learning_rate)
+    model.to(device)
 
     logging.info("Start training...")
     model.train()
@@ -70,6 +79,8 @@ def main(args: argparse.Namespace = None) -> None:
     for epoch in range(num_epochs):
         train_losses = []
         for images, labels in train_loader:
+            images = images.to(device)
+            labels = labels.to(device)
             outputs = model(images)
             loss = loss_fn(outputs, labels)
             loss.backward()
@@ -85,7 +96,7 @@ def main(args: argparse.Namespace = None) -> None:
 
         logging.info(
             f"[Epoch {epoch+1}/{num_epochs}] "
-            f"Train loss: {torch.mean(torch.tensor(train_losses)):.3f}, Val loss: {val_loss:.3f}"
+            f"Train loss: {torch.mean(torch.tensor(train_losses)):.3f}, Val loss: {val_loss:.3f}, "
             f"Train accuracy: {train_accuracy:.3f}, "
             f"Val accuracy: {val_accuracy:.3f}")
 

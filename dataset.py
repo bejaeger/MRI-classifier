@@ -1,13 +1,14 @@
 import argparse
 import json
 import os
+from dataclasses import dataclass
 from typing import *
 
 from numpy.typing import NDArray
 import matplotlib.pyplot as plt
 import nibabel as nib
 from nibabel.nifti1 import Nifti1Image
-from dataclasses import dataclass
+from tqdm import tqdm
 
 
 @dataclass
@@ -33,7 +34,8 @@ class CustomDataset:
         num_datapoints = 0
         if not os.path.exists(data_folder):
             raise ValueError(f"Dataset folder does not exist `{data_folder}`")
-        for folder_name in os.listdir(data_folder):
+        
+        for folder_name in tqdm(os.listdir(data_folder)):
             folder = os.path.join(data_folder, folder_name)
             if not "case" in folder:
                 continue
@@ -56,7 +58,7 @@ class CustomDataset:
                 labels.append(int(f.read().lower().strip().replace("\"", "") == "high"))
 
             num_datapoints += 1
-            if max_datapoints is not None and num_datapoints >= max_datapoints:
+            if max_datapoints is not None and num_datapoints > max_datapoints:
                 break
 
         if len(images) == 0:
