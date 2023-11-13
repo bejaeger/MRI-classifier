@@ -36,7 +36,7 @@ def evaluate(model: Module, loader: DataLoader, loss_fn: Callable) -> Tuple[floa
 def main(args: argparse.Namespace = None) -> None:
     # TODO: create config
     num_epochs = 10
-    batch_size = 8
+    batch_size = 32
     learning_rate = 3e-4
     train_portion = 0.8
 

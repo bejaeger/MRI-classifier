@@ -51,7 +51,7 @@ class AlexNet3D(Module):
     def __init__(self, num_classes: int = 2) -> None:
         super(AlexNet3D, self).__init__()
 
-        hidden_channels = 48
+        hidden_channels = 16
 
         self.layer1 = nn.Sequential(
             nn.Conv3d(1, hidden_channels, kernel_size=11, stride=4, padding=0),
@@ -59,26 +59,26 @@ class AlexNet3D(Module):
             nn.ReLU(),
             nn.MaxPool3d(kernel_size=3, stride=2))
         self.layer2 = nn.Sequential(
-            nn.Conv3d(hidden_channels, 128, kernel_size=5, stride=1, padding=2),
-            nn.BatchNorm3d(128),
+            nn.Conv3d(hidden_channels, hidden_channels * 2, kernel_size=5, stride=1, padding=2),
+            nn.BatchNorm3d(hidden_channels * 2),
             nn.ReLU(),
             nn.MaxPool3d(kernel_size=3, stride=2))
         self.layer3 = nn.Sequential(
-            nn.Conv3d(128, 256, kernel_size=3, stride=1, padding=1),
-            nn.BatchNorm3d(256),
+            nn.Conv3d(hidden_channels * 2, hidden_channels * 3, kernel_size=3, stride=1, padding=1),
+            nn.BatchNorm3d(hidden_channels * 3),
             nn.ReLU())
         self.layer4 = nn.Sequential(
-            nn.Conv3d(256, 256, kernel_size=3, stride=1, padding=1),
-            nn.BatchNorm3d(256),
+            nn.Conv3d(hidden_channels * 3, hidden_channels * 3, kernel_size=3, stride=1, padding=1),
+            nn.BatchNorm3d(hidden_channels * 3),
             nn.ReLU())
         self.layer5 = nn.Sequential(
-            nn.Conv3d(256, 128, kernel_size=3, stride=1, padding=1),
-            nn.BatchNorm3d(128),
+            nn.Conv3d(hidden_channels * 3, hidden_channels, kernel_size=3, stride=1, padding=1),
+            nn.BatchNorm3d(hidden_channels),
             nn.ReLU(),
             nn.MaxPool3d(kernel_size=1, stride=1))  # unecessary pooling
         self.fc = nn.Sequential(
             nn.Dropout(0.5),
-            nn.Linear(25088, 2048),
+            nn.Linear(14 * 14 * hidden_channels, 2048),
             nn.ReLU())
         self.fc1 = nn.Sequential(
             nn.Dropout(0.5),
@@ -87,14 +87,19 @@ class AlexNet3D(Module):
         self.fc2= nn.Sequential(
             nn.Linear(2048, num_classes))
         
+        self.dropout_conv =  nn.Dropout(0.2)
+    
     def forward(self, x):
         if x.ndim < 5:
             x = x.unsqueeze(1)  # add channel dimension
     
         out = self.layer1(x)
         out = self.layer2(out)
+        out = self.dropout_conv(out)
         out = self.layer3(out)
+        out = self.dropout_conv(out)
         out = self.layer4(out)
+        out = self.dropout_conv(out)
         out = self.layer5(out)
         out = out.reshape(out.size(0), -1)
         out = self.fc(out)
