@@ -51,28 +51,28 @@ class AlexNet3D(Module):
     def __init__(self, num_classes: int = 2) -> None:
         super(AlexNet3D, self).__init__()
 
-        hidden_channels = 16
+        hidden_channels = 8
 
         self.layer1 = nn.Sequential(
-            nn.Conv3d(1, hidden_channels, kernel_size=11, stride=4, padding=0),
+            nn.Conv3d(1, hidden_channels * 2, kernel_size=11, stride=4, padding=0),
             nn.BatchNorm3d(hidden_channels),
             nn.ReLU(),
             nn.MaxPool3d(kernel_size=3, stride=2))
         self.layer2 = nn.Sequential(
-            nn.Conv3d(hidden_channels, hidden_channels * 2, kernel_size=5, stride=1, padding=2),
-            nn.BatchNorm3d(hidden_channels * 2),
+            nn.Conv3d(hidden_channels * 2, hidden_channels * 3, kernel_size=5, stride=1, padding=2),
+            nn.BatchNorm3d(hidden_channels * 3),
             nn.ReLU(),
             nn.MaxPool3d(kernel_size=3, stride=2))
         self.layer3 = nn.Sequential(
-            nn.Conv3d(hidden_channels * 2, hidden_channels * 3, kernel_size=3, stride=1, padding=1),
-            nn.BatchNorm3d(hidden_channels * 3),
-            nn.ReLU())
-        self.layer4 = nn.Sequential(
             nn.Conv3d(hidden_channels * 3, hidden_channels * 3, kernel_size=3, stride=1, padding=1),
             nn.BatchNorm3d(hidden_channels * 3),
             nn.ReLU())
+        self.layer4 = nn.Sequential(
+            nn.Conv3d(hidden_channels * 3, hidden_channels * 2, kernel_size=3, stride=1, padding=1),
+            nn.BatchNorm3d(hidden_channels * 2),
+            nn.ReLU())
         self.layer5 = nn.Sequential(
-            nn.Conv3d(hidden_channels * 3, hidden_channels, kernel_size=3, stride=1, padding=1),
+            nn.Conv3d(hidden_channels * 2, hidden_channels, kernel_size=3, stride=1, padding=1),
             nn.BatchNorm3d(hidden_channels),
             nn.ReLU(),
             nn.MaxPool3d(kernel_size=1, stride=1))  # unecessary pooling
