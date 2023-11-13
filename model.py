@@ -69,14 +69,14 @@ class AlexNet3D(Module):
             nn.ReLU())
         self.fc = nn.Sequential(
             nn.Dropout(0.7),
-            nn.Linear(14 * 14 * hidden_channels, 2048),
+            nn.Linear(14 * 14 * hidden_channels, 1024),
             nn.ReLU())
         self.fc1 = nn.Sequential(
             nn.Dropout(0.7),
-            nn.Linear(2048, 2048),
+            nn.Linear(1024, 1024),
             nn.ReLU())
         self.fc2= nn.Sequential(
-            nn.Linear(2048, num_classes))
+            nn.Linear(1024, num_classes))
         
         self.dropout_conv =  nn.Dropout(0.2)
     

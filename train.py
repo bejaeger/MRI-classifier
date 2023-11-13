@@ -107,7 +107,7 @@ def main(args: argparse.Namespace = None) -> None:
 
     output_path = "checkpoints/model.pth"
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
-    logging.info("Saving model to `{output_path}`...")
+    logging.info(f"Saving model to `{output_path}`...")
     torch.save(model.state_dict(), "checkpoints/model.pth")
 
 
