@@ -25,7 +25,7 @@ def evaluate(model: Module, loader: DataLoader, loss_fn: Callable) -> Tuple[floa
             outputs = model(images)
             loss += loss_fn(outputs, labels)
             _, predicted = torch.max(outputs.data, 1)
-            total += labels.size(0)
+            total += labels.shape[0]
             correct += (predicted == labels).sum().item()
     accuracy = 100 * correct / total
     loss = loss / len(loader)
@@ -35,14 +35,14 @@ def evaluate(model: Module, loader: DataLoader, loss_fn: Callable) -> Tuple[floa
 def main(args: argparse.Namespace = None) -> None:
     # TODO: create config
     num_epochs = 10
-    batch_size = 8
+    batch_size = 4
     learning_rate = 0.00005
     train_portion = 0.8
 
     dataset_folder = args.data_folder
 
     logging.info("Loading data...")
-    raw_dataset = CustomDataset(data_folder=dataset_folder, max_datapoints=64)
+    raw_dataset = CustomDataset(data_folder=dataset_folder, max_datapoints=4)
 
     logging.info("Preprocessing data...")
     images = preprocess(images=raw_dataset.image_data)  # pad images to have depth 40 (found to be max depth)
