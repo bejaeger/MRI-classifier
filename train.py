@@ -1,3 +1,4 @@
+import os
 import argparse
 import logging
 from typing import *
@@ -35,14 +36,14 @@ def evaluate(model: Module, loader: DataLoader, loss_fn: Callable) -> Tuple[floa
 def main(args: argparse.Namespace = None) -> None:
     # TODO: create config
     num_epochs = 10
-    batch_size = 4
+    batch_size = 8
     learning_rate = 0.00005
     train_portion = 0.8
 
     dataset_folder = args.data_folder
 
     logging.info("Loading data...")
-    raw_dataset = CustomDataset(data_folder=dataset_folder, max_datapoints=4)
+    raw_dataset = CustomDataset(data_folder=dataset_folder, max_datapoints=64)
 
     logging.info("Preprocessing data...")
     images = preprocess(images=raw_dataset.image_data)  # pad images to have depth 40 (found to be max depth)
@@ -53,6 +54,9 @@ def main(args: argparse.Namespace = None) -> None:
     train_labels = labels[:int(len(labels) * train_portion)]
     val_images = images[int(len(images) * train_portion):]
     val_labels = labels[int(len(labels) * train_portion):]
+
+    logging.info("[train set] num positive/negative labels:", sum(train_labels), "/", len(train_labels) - sum(train_labels))
+    logging.info("[val set] num positive/negative labels:", sum(val_labels), "/", len(val_labels) - sum(val_labels))
     
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
@@ -74,6 +78,7 @@ def main(args: argparse.Namespace = None) -> None:
     model.to(device)
 
     logging.info("Start training...")
+    logging.info(model)
     model.train()
     iteration_index = 0
     for epoch in range(num_epochs):
@@ -99,6 +104,11 @@ def main(args: argparse.Namespace = None) -> None:
             f"Train loss: {torch.mean(torch.tensor(train_losses)):.3f}, Val loss: {val_loss:.3f}, "
             f"Train accuracy: {train_accuracy:.3f}, "
             f"Val accuracy: {val_accuracy:.3f}")
+
+    output_path = "checkpoints/model.pth"
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+    logging.info("Saving model to `{output_path}`...")
+    torch.save(model.state_dict(), "checkpoints/model.pth")
 
 
 if __name__ == "__main__":

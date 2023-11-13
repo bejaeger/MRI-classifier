@@ -35,7 +35,7 @@ class CustomDataset:
         if not os.path.exists(data_folder):
             raise ValueError(f"Dataset folder does not exist `{data_folder}`")
         
-        for folder_name in tqdm(os.listdir(data_folder)):
+        for folder_name in tqdm(os.listdir(data_folder), total=min(len(os.listdir(data_folder)), max_datapoints or float('inf'))):
             folder = os.path.join(data_folder, folder_name)
             if not "case" in folder:
                 continue
