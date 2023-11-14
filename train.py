@@ -43,7 +43,7 @@ def main(args: argparse.Namespace = None) -> None:
     dataset_folder = args.data_folder
 
     logging.info("Loading data...")
-    raw_dataset = CustomDataset(data_folder=dataset_folder, max_datapoints=64)
+    raw_dataset = CustomDataset(data_folder=dataset_folder)  #, max_datapoints=128)
 
     logging.info("Preprocessing data...")
     images = preprocess(images=raw_dataset.image_data)  # pad images to have depth 40 (found to be max depth)
